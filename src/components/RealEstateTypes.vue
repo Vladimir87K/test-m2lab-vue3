@@ -74,7 +74,6 @@
     border: 1px solid #d2d2d2;
     border-radius: 8px;
     background-color: #fff;
-    text-rendering: optimizeSpeed;
     display: flex;
     align-items: center;
     position: relative;
