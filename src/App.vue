@@ -13,10 +13,9 @@
       <span class="price__min-subtitle">от</span>
       <input
         @change="showPrice" 
+        @input="viemInputPrice"
         class="price__min-value" 
-        type="number" 
-        :min="minPrice" 
-        :max="maxPrice" 
+        type="text" 
         :value="choiceMinPrice"
         >
     </div>
@@ -24,17 +23,16 @@
       <span class="price__max-subtitle">до</span>
       <input 
         @change="showPrice" 
+        @input="viemInputPrice"
         class="price__max-value" 
-        type="number" 
-        :min="minPrice" 
-        :max="maxPrice" 
+        type="text" 
         :value="choiceMaxPrice"
         >
     </div>
     <div class="price__progress">
         <div 
           class="price__progress-content"
-          :style="{left: `${(choiceMinPrice / maxPrice) * 100}%`, right: `${100 - (this.choiceMaxPrice / this.maxPrice) * 100}%`}"
+          :style="{left: `${(progressMinPrice / maxPrice) * 100}%`, right: `${100 - (progressMaxPrice / maxPrice) * 100}%`}"
          >
         </div>
         <input 
@@ -43,7 +41,7 @@
           type="range" 
           :min="minPrice" 
           :max="maxPrice" 
-          :value="choiceMinPrice"
+          :value="progressMinPrice"
         >
         <input 
           @input="changePrice" 
@@ -51,7 +49,7 @@
           type="range" 
           :min="minPrice" 
           :max="maxPrice" 
-          :value="choiceMaxPrice"
+          :value="progressMaxPrice"
           >      
     </div>
   </div>
@@ -80,55 +78,78 @@ export default {
       typeRooms: [],
       minPrice: 1,
       maxPrice: 100,
-      choiceMinPrice: 1,
-      choiceMaxPrice: 100,
-      step: 100000,
+      choiceMinPrice: '1',
+      choiceMaxPrice: '100000',
+      progressMinPrice: 1,
+      progressMaxPrice: 100,
+      step: 1000000,
     }
   },
 
   methods: {
     changePrice(e) {
-      if (this.choiceMaxPrice - this.choiceMinPrice < this.step) {
+      console.log(this.progressMaxPrice - this.progressMinPrice)
+      if (this.progressMaxPrice - this.progressMinPrice < this.step) {
         if (e.target.classList.contains('price__progress-min')) {
-          this.choiceMinPrice = this.choiceMaxPrice - this.step
+          this.progressMinPrice = this.progressMaxPrice - this.step;
+          this.choiceMinPrice = this._numberWithSpaces(this.progressMinPrice)
         } else {
-          this.choiceMaxPrice = this.choiceMinPrice + this.step
+          this.progressMaxPrice = this.progressMinPrice + this.step;
+          this.choiceMaxPrice = this._numberWithSpaces(this.progressMaxPrice)
         }
       } else {
         if (e.target.classList.contains('price__progress-min')) {
-          this.choiceMinPrice = e.target.value;
+          this.choiceMinPrice =this._numberWithSpaces(e.target.value);
+          this.progressMinPrice = e.target.value;
         } else {
-          this.choiceMaxPrice = e.target.value;
+          this.choiceMaxPrice = this._numberWithSpaces(e.target.value);
+          this.progressMaxPrice = e.target.value;
         }
       }
     },
     showPrice(e) {
-      const input = e.target
+      // console.log(e.target)
+      // console.log(e.target.value)
+      // console.log(typeof(e.target.value))
+      const input = e.target;
+      const value = Number(e.target.value.replace(/[^0-9]/g, ''))
       if (input.classList.contains('price__min-value')) {
-        if (input.value > this.choiceMaxPrice) {
+        if (value > this.progressMaxPrice) {
           alert ('Вы ввели значение, превышающее выбранное максимальное');
-          this.choiceMinPrice = this.minPrice;
-          input.value = this.minPrice;
-        } else if (input.value < this.minPrice) {
+          this.progressMinPrice = this.minPrice;
+          input.value = this._numberWithSpaces(this.minPrice);
+        } else if (value < this.minPrice) {
           alert ('Вы ввели значение меньше минимально возможного');
-          this.choiceMinPrice = this.minPrice;
-          input.value = this.minPrice;
+          this.progressMinPrice = this.minPrice;
+          input.value = this._numberWithSpaces(this.minPrice);
         } else {
-          this.choiceMinPrice = input.value;
+          console.log('3')
+          console.log(value)
+          this.progressMinPrice = value;
+          this.choiceMinPrice = this._numberWithSpaces(value);
         }
       } else {
-        if (input.value < this.choiceMinPrice ) {
+        if (value < this.choiceMinPrice ) {
           alert ('Вы ввели значение, которое меньше выбранного минимального');
-          this.choiceMaxPrice = this.maxPrice;
-          input.value = this.maxPrice;
-        } else if (input.value > this.maxPrice) {
+          this.progrressMaxPrice = this.maxPrice;
+          input.value = this._numberWithSpaces(this.maxPrice);
+        } else if (value > this.maxPrice) {
           alert ('Вы ввели значение, превышающее максимально возможное');
-          this.choiceMaxPrice = this.maxPrice;
-          input.value = this.maxPrice;
+          this.progressMaxPrice = this.maxPrice;
+          input.value = this._numberWithSpaces(this.maxPrice);
         } else {
-          this.choiceMaxPrice = input.value;
+          this.progressMaxPrice = value;
+          this.choiceMaxPrice = this._numberWithSpaces(value);
         }
       }
+    },
+    viemInputPrice(e) {
+      const value = e.target.value.replace(/[^0-9]/g, '');
+      const newValue =  this._numberWithSpaces(value);
+      e.target.value = newValue;
+    },
+    _numberWithSpaces(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
     },
     async fetchFilter() {
       try {
@@ -137,7 +158,9 @@ export default {
         this.typeApartmens = response.data[0].realEstateTypes.split(',');
         this.typeRooms = response.data[0].rooms.split(',');
         [this.minPrice, this.maxPrice] = response.data[0].price.split(',');
-        [this.choiceMinPrice, this.choiceMaxPrice] = response.data[0].price.split(',');
+        [this.progressMinPrice, this.progressMaxPrice] = response.data[0].price.split(',')
+        this.choiceMinPrice = this._numberWithSpaces(this.minPrice);
+        this.choiceMaxPrice = this._numberWithSpaces(this.maxPrice);
       } catch (e) {
         console.log('Ошибочка вышла');
       }
@@ -254,7 +277,7 @@ export default {
 .price__progress {
   display: flex;
   position: absolute;
-  width: 263px;
+  width: 261px;
   bottom: -1px;
   left: 34px;
   background: red;
@@ -266,7 +289,6 @@ export default {
   right: 0%;
   height: 2px;
   background: #3DA14B;
-  border-radius: 50px;
   top: -1px;
   max-width: 96%;
 }
@@ -274,13 +296,17 @@ export default {
 .price__progress-min, 
 .price__progress-max {
   position: absolute;
-  top: -11px;
+  top: -9px;
   left: -5px;
   width: 101%;
   -webkit-appearance: none;
   pointer-events: none;
   background: none;
   outline: none;
+}
+
+.price__progress-max {
+  width: 102%;
 }
 
 .price__progress-min::-webkit-slider-thumb, 
