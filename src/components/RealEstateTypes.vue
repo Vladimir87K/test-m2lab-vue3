@@ -56,10 +56,12 @@
       } else {
         this.choiseApartment = this.choiseApartment.filter((i) => i !== apartment)
       }
-      this.viemModalApartment()
+      this.$emit('valueInput', this.choiseApartment);
+      this.viemModalApartment();
     },
     removeChoisApartment() {
       this.choiseApartment = [];
+      this.$emit('valueInput', this.choiseApartment);
     },
   }
 }

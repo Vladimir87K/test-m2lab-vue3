@@ -75,11 +75,13 @@
             this.choiseRoom = this.choiseRoom.filter(i => i !== room);
           }
         }
+        this.$emit('valueInput', this.choiseRoom);
         e.target.parentNode.classList.toggle('room__modal-point_checked');
       }
     },
     removeChoiseRoom() {
       this.choiseRoom = [];
+      this.$emit('valueInput', this.choiseRoom);
       const points = document.querySelectorAll('.room__modal-point');
       
       points.forEach((point) => {
