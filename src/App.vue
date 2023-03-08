@@ -4,7 +4,7 @@
 
     <div class="container">
       <RealEstateTypes 
-        @valueInput="showNewUrl"
+        @valueInput="_typesNewUrl"
         :typeApartmens="typeApartmens"
       />
 
@@ -13,7 +13,7 @@
       />
       
       <RealEstateRooms
-        @valueInput="showNewUrl"
+        @valueInput="_roomsNewUrl"
         :typeRooms="typeRooms"
       />
     </div>
@@ -42,7 +42,14 @@ export default {
         maxPrice: 100,
         progressMinPrice: 1,
         progressMaxPrice: 100,
-      }
+      },
+      _url: '',
+      paramNewUrl: {
+        rooms: 0,
+        minPrice: 1,
+        maxPrice: 100,
+        realEstateTypes: '',
+      },
     }
   },
   methods: {
@@ -58,24 +65,44 @@ export default {
         console.log('Ошибочка вышла');
       }
     },
-    showNewUrl(e) {
-      console.log(e)
+    _roomsNewUrl(e) {
+      if (e.length >= 1) {
+        this.paramNewUrl.rooms = `?rooms=${e.join('&')}rooms`;
+      } else {
+        this.paramNewUrl.rooms = ``;
+      }
     },
-    showUrl(e) {
-      console.log(e)
-      // const newUrl = new URL(`${minPrice}&minPrice=${maxPrice}&maxPrice`, url);
+    _typesNewUrl(e) {
+      if (e.length >= 1) {
+        this.paramNewUrl.realEstateTypes = `?realEstateTypes=${e.join('&')}realEstateTypes`;
+      } else {
+        this.paramNewUrl.realEstateTypes = '';
+      }
+    },
+    _showNewUrl() {
+      const newUrl = new URL(`${this.paramNewUrl.rooms}${this.paramNewUrl.minPrice}${this.paramNewUrl.maxPrice}${this.paramNewUrl.realEstateTypes}`, this._url);
+      window.history.replaceState(null, null, newUrl)
+      console.log(this._url, newUrl) 
+    },
+  },
+  watch: {
+    dataPrice: {
+      handler(newValue) {
+        if (newValue.progressMaxPrice) this.paramNewUrl.maxPrice = `?maxPrice=${newValue.progressMaxPrice}`;
+        if (newValue.progressMinPrice) this.paramNewUrl.minPrice = `?minPrice=${newValue.progressMinPrice}`;
+      },
+      deep: true
+    },
+    paramNewUrl: {
+      handler(newValue) {
+        this._showNewUrl()
+      },
+      deep: true
     }
   },
-  // watch: {
-  //   dataPrice: {
-  //     handler(newValue) {
-  //       console.log(newValue.progressMaxPrice)
-  //     },
-  //     deep: true
-  //   },
-  // },
   mounted() {
     this.fetchFilter();
+    this._url = document.URL;
   }
 }
 </script>
@@ -100,6 +127,7 @@ export default {
     justify-content: space-between;
     position: relative;
     width: 1100px;
+    margin-top: 20px;
   }
 
   
