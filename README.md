@@ -1,19 +1,4 @@
 # test-m2lab-vue3
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Тестовое задание от M2LAB, выполнено с использованием Vue 3. Не выполнен последний пункт задания, подпункт об изменении фильтров при изменении адресной строки в виду необходимости кодирования букс кириллицы по уникоду, что делает адресную строку нечитаемой, и как следствие, изменения, вносимые пользователем теряют смысл.
+В работе остался один баг - ползунки можно сместить друг за друга. Это решаемо, но требует дополнительного времени.
