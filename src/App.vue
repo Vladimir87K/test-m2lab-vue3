@@ -50,6 +50,7 @@ export default {
         maxPrice: 100,
         realEstateTypes: '',
       },
+      _newUrl: null,
     }
   },
   methods: {
@@ -82,8 +83,14 @@ export default {
     _showNewUrl() {
       const newUrl = new URL(`${this.paramNewUrl.rooms}${this.paramNewUrl.minPrice}${this.paramNewUrl.maxPrice}${this.paramNewUrl.realEstateTypes}`, this._url);
       window.history.replaceState(null, null, newUrl)
-      console.log(this._url, newUrl) 
+      console.log(window.location.search) 
     },
+    // _wathNewUrl() {
+    //   this._newUrl = setInterval(() => {
+    //     const urlSearch = window.location.search;
+    //     console.log(urlSearch)
+		// }, 3000)
+    // }
   },
   watch: {
     dataPrice: {
@@ -103,7 +110,11 @@ export default {
   mounted() {
     this.fetchFilter();
     this._url = document.URL;
-  }
+    this._wathNewUrl();
+  },
+  // beforeDestroy() {
+  //   clearInterval(this._newUrl)
+  // }
 }
 </script>
 
