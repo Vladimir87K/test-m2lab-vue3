@@ -116,9 +116,9 @@
 
   .container-room-modal {
     top: 0;
-    bottom: 0;
-    right: 0;
     left: 0;
+    width: 1100px;
+    height: 100vh;
     background: rgba(0, 0, 0, 0); 
     position: fixed;
     display: none;
@@ -130,8 +130,8 @@
     align-items: flex-start;
     width: 296px;
     position: absolute;
-    top: 95px;
-    right: 20px;
+    top: 115px;
+    right: -18px;
     box-shadow: 0 2px 10px 0 rgba(40, 40, 40, 0.18);
     border-radius: 10px;
   }
