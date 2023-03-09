@@ -6,6 +6,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vladimir87K/test-m2lab-vue3"
+},
   "dependencies": {
     "axios": "^1.3.4",
     "core-js": "^3.8.3",
